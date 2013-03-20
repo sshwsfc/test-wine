@@ -1,0 +1,10 @@
+CACHE MANIFEST
+
+#004 第一版, 修正分类顺序
+
+CACHE:
+index.html
+styles/app.css
+scripts/app.js
+NETWORK:
+*

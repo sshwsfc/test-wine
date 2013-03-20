@@ -1,0 +1,511 @@
+body{background:#fff;margin:0;padding:0;overflow-x:hidden;display:block;font-size:13.333333333333332px;font-weight:normal;font-family:Droid Sans,Arial,sans-serif;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;-webkit-tap-highlight-color:rgba(0,0,0,0.00)}
+@font-face{font-family:'DateNumber';src:url("../number.ttf") format('truetype')}
+@font-face{font-family:'icon';src:url("../icons-webfont.ttf") format('truetype')}
+.ui-mobile-rendering > *{visibility:hidden}
+.error{color:#f5c1c3}
+.hidd{display:none}
+.clear{clear:both}
+html.landscape .portrait,html.portrait .landscape{display:none}
+.wrap-line{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+a{text-decoration:none;cursor:pointer;color:#333}
+p{margin:0 0 4px;padding:0;word-wrap:break-word;}
+p.big{font-size:1.5em}
+p.small{font-size:.75em}
+p.bottom{margin:10px 0 0 0}
+p .more{float:right;font-size:.9em}
+i{font-size:13.333333333333332px;margin:0;padding:0;font-style:normal;color:#7d7d7d}
+img{display:inline}
+b{font-weight:bold}
+table{width:100%}
+table,table td{text-align:center;vertical-align:top}
+ul.num2 li{width:50%}
+ul.num3 li{width:33.333%}
+ul.num4 li{width:25%}
+ul.num5 li{width:20%}
+i.star{text-indent:-99em;display:inline-block;width:12.666666666666666px;height:11.333333333333332px;line-height:14.666666666666666px;background-image:url("../imgs/star.png");background-size:12.666666666666666px 11.333333333333332px;}
+i.star.empty{background-image:url("../imgs/empty_star.png");background-size:12.666666666666666px 11.333333333333332px}
+.top-banner{height:30px;background:#a00c08;border-bottom:1px solid #df110c;text-align:center;padding:8.666666666666666px;}
+.top-banner h1{margin:0 auto;padding:0;font-size:22.666666666666664px;display:block;width:154.66666666666666px;height:30px;color:#fff;background-image:url("../imgs/logo.png");background-repeat:no-repeat;background-size:26.666666666666664px 26.666666666666664px}
+.title-bar{padding:10px 0 0;margin:0;height:26.666666666666664px;background-image:url("../imgs/sub_bg.jpg");background-size:11.333333333333332px 38px;font-size:15.333333333333332px;text-align:center;color:#fff}
+ul.tabs{z-index:999;width:100%;padding:0;margin:0;height:42.666666666666664px;background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#444),color-stop(50%,#3d3d3d),color-stop(100%,#373737));}
+ul.tabs>li{display:inline;float:left;margin:0;padding:0;border:0;text-align:center;height:100%;border-left:1px solid #555;border-right:1px solid #363636;-webkit-box-sizing:border-box;}
+ul.tabs>li:first-child{border-left:none}
+ul.tabs>li:last-child{border-right:none}
+ul.tabs>li a{display:block;text-align:center;padding:10.666666666666666px 10px;font-size:18.666666666666664px;color:#888;text-shadow:1px 1px 0 rgba(0,0,0,0.10)}
+ul.tabs>li.active{border-right:none;border-left:none;background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#323232),color-stop(100%,#535353));}
+ul.tabs>li.active a{color:#fff}
+ul.sub-tabs{width:100%;padding:0;margin:0;height:38px;background-image:url("../imgs/sub_bg.jpg");background-size:17px 57px;}
+ul.sub-tabs>li{display:inline;float:left;margin:0;padding:6.666666666666666px;border:0;text-align:center;height:100%;-webkit-box-sizing:border-box;}
+ul.sub-tabs>li a{display:block;text-align:center;padding:6.666666666666666px 0 3.333333333333333px;font-size:14.666666666666666px;color:#888;text-shadow:1px 1px 0 rgba(0,0,0,0.10)}
+ul.sub-tabs>li.active a{color:#fff;border-bottom:1px solid #fff}
+#wrapper{position:absolute;z-index:1;top:0;bottom:0;left:0;width:100%;overflow:auto}
+#scroller{position:absolute;z-index:1;-webkit-tap-highlight-color:rgba(0,0,0,0.00);width:100%;padding:0}
+#pullDown,#pullUp{background:#fff;height:40px;line-height:40px;padding:5px 10px;font-weight:bold;font-size:14px;color:#888}
+#pullDown .pullDownIcon,#pullUp .pullUpIcon{display:block;float:left;width:40px;height:40px;background:url("../imgs/pull-icon.png") 0 0 no-repeat;-webkit-background-size:40px 80px;background-size:40px 80px;-webkit-transition-property:-webkit-transform;-webkit-transition-duration:250ms}
+#pullDown .pullDownIcon{-webkit-transform:rotate(0) translateZ(0)}
+#pullUp .pullUpIcon{-webkit-transform:rotate(-180deg) translateZ(0)}
+#pullDown.flip .pullDownIcon{-webkit-transform:rotate(-180deg) translateZ(0)}
+#pullUp.flip .pullUpIcon{-webkit-transform:rotate(0) translateZ(0)}
+#pullDown.loading .pullDownIcon,#pullUp.loading .pullUpIcon{background-position:0 100%;-webkit-transform:rotate(0) translateZ(0);-webkit-transition-duration:0;-webkit-animation-name:loading;-webkit-animation-duration:2s;-webkit-animation-iteration-count:infinite;-webkit-animation-timing-function:linear}
+@-webkit-keyframes loading{0%{-webkit-transform:rotate(0) translateZ(0)}
+100%{-webkit-transform:rotate(360deg) translateZ(0)}
+}img.icon{background:#ddd url("../imgs/d_icon.png") 50% 50% no-repeat}
+div.loader{background:#ccc url("../imgs/icon_logo.png") 50% 50% no-repeat;text-indent:-99em;width:100%;height:100%}
+.banner img{display:block;width:100%}
+.banner ul#advs{margin:0;padding:0;list-style:none;}
+.banner ul#advs li{text-align:center;}
+.banner ul#advs li a{display:block;}
+.banner ul#advs li a img{width:100%;display:block}
+.banner ul.nav{position:absolute;z-index:100;top:220px;height:12px;left:50%;background:rgba(0,0,0,0.40);padding:0;margin:0 0 0 -12px;-webkit-border-radius:5px;}
+.banner ul.nav li{display:block;float:left;width:6px;height:6px;line-height:6px;-webkit-border-radius:3px;background:rgba(255,255,255,0.30);overflow:hidden;padding:0;margin:3px 3px 0;text-align:center;}
+.banner ul.nav li.selected{background:rgba(255,255,255,0.60)}
+div.games{padding-bottom:70px}
+.subbar{padding:6.666666666666666px;margin:0;height:37px;background-image:url("../imgs/sub_bg.jpg");background-size:11.333333333333332px 38px;}
+.subbar#search_bar input{font-size:20px;border-radius:20px;width:100%;height:40px;padding:6.666666666666666px;margin-bottom:6.666666666666666px;background:#fff url("../imgs/search_bg.png") 97% center no-repeat;background-size:22px 22px;box-sizing:border-box;border:1px solid rgba(0,0,0,0.20);box-shadow:0 1px 1px rgba(255,255,255,0.20),inset 0 1px 1px rgba(0,0,0,0.10);-webkit-appearance:none}
+img.icon{border-radius:5px 5px;-webkit-box-shadow:0 1px 4px rgba(0,0,0,0.30)}
+ul.ls{list-style:none;margin:2px 0;padding:0;zoom:1;}
+ul.ls li{border-bottom:1px solid #ccc;padding:6px;position:relative;display:block;margin:0;overflow:show;text-align:left;cursor:pointer;text-overflow:ellipsis;list-style:none;}
+ul.ls li.hover{background:#f0f7fe}
+ul.ls li a.download{position:absolute;right:10px;top:50%;margin-top:-11.333333333333332px;background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#fff),color-stop(100%,#eee));font-size:12pt;color:#666;border-radius:5px;border:1px solid #ccc;padding:4px 10.666666666666666px;-webkit-box-shadow:0 1px 4px rgba(0,0,0,0.30);}
+ul.ls li a.download:hover{background:#fff}
+ul.ls li a.content{display:block;min-height:90px;}
+ul.ls li a.content img.icon{margin:0;float:left;border-radius:10px 10px;margin:6.666666666666666px 0 0 3.333333333333333px;-webkit-box-shadow:0 1px 4px rgba(0,0,0,0.30);width:80px;height:80px}
+ul.ls li a.content p{margin-left:93.33333333333333px;color:#666;}
+ul.ls li a.content p b{font-size:17.333333333333332px;padding-top:4.666666666666666px;display:block;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;color:#000}
+a.next{color:#919191;font-size:16px;text-align:center;margin:16.666666666666664px 0;text-shadow:rgba(255,255,255,0.60) 0 1px 1px;display:block;height:23.333333333333332px}
+div.loading{text-indent:-99em;background:url("../imgs/loading.gif") 50% 50% no-repeat;display:block;height:65px}
+div#game_info{display:block;}
+div#game_info #content{margin-bottom:33.33333333333333px}
+div#game_info #loader{width:100%;height:150px;background:#fff url("../imgs/icon_logo.png") 50% 50% no-repeat;text-indent:-99em}
+div#game_info #info{display:block;padding:5.333333333333333px 6.666666666666666px 4px;min-height:86.66666666666666px;}
+div#game_info #info img.icon{display:block;margin:13.333333333333332px auto;border-radius:10px 10px;-webkit-box-shadow:0 1px 4px rgba(0,0,0,0.30);width:200px;height:200px}
+div#game_info #info p{color:#666;line-height:17.333333333333332px;}
+div#game_info #info p b{font-size:17.333333333333332px;padding-top:4.666666666666666px;display:block;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;color:#000}
+div#game_info #info .ext_info .red{font-size:1.5em;font-weight:bold;color:#f00}
+div#game_info h4{margin:10px 0 10px;padding:6px 10px 5px;color:#000;height:20px;background:#eee;font-size:16px;-webkit-box-shadow:0 0 4px rgba(0,0,0,0.40)}
+div#game_info div#infos{padding:2px 5px;}
+div#game_info div#infos ul{list-style:none;padding:0;zoom:1;margin:2px 6px;}
+div#game_info div#infos ul::after{content:'';clear:both;display:block}
+div#game_info div#infos ul li{width:33.333%;float:left;display:inline-block;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;margin:5px 0;}
+div#game_info div#infos ul li b{margin-right:5px}
+div#game_info div#screen_shots{width:100%;}
+div#game_info div#screen_shots ul.gallery{list-style:none;padding:0;zoom:1;margin:2px 6px;}
+div#game_info div#screen_shots ul.gallery::after{content:'';clear:both;display:block}
+div#game_info div#screen_shots ul.gallery li{width:100%;float:left;display:inline;text-align:center;}
+div#game_info div#screen_shots ul.gallery li img{width:96%;background:#ccc url("../imgs/icon_logo.png") 50% 50% no-repeat}
+div#game_info div#evaluator{background:#e1eff8;border-radius:5px;margin:6px 8px;min-height:72px;}
+div#game_info div#evaluator p{padding:6px;text-shadow:1px 1px 1px #fff;font-size:13.333333333333332px}
+div#game_info div#evaluator .avatar{float:right;background:#0d7ee4;border-radius:5px;height:62px;text-align:center;padding:5px;margin-left:5px;-webkit-box-shadow:-2px 0 4px rgba(0,0,0,0.40);}
+div#game_info div#evaluator .avatar::before{content:' ';position:absolute;width:8px;height:8px;background:#0d7ee4;margin:20px 0 0 -9px;-webkit-transform:rotate(45deg);-webkit-box-shadow:-2px 2px 2px rgba(0,0,0,0.20)}
+div#game_info div#evaluator .avatar img{width:48px;height:48px}
+div#game_info div#evaluator .avatar span{display:block;font-size:8pt;color:#fff}
+div#download_bar{z-index:999;width:100%;padding:0;margin:0;height:47px;position:absolute;bottom:0;text-align:center;-webkit-box-shadow:0 -2px 2px rgba(0,0,0,0.20);background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#484848),color-stop(100%,#343434));}
+div#download_bar a{width:100px;height:34px;border-top:1px solid #ffd480;border-radius:3px;margin-top:6px;display:inline-block;background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#ffa700),color-stop(100%,#ff7300));}
+div#download_bar a span{margin:6px;display:inline-block;font-size:13pt;text-shadow:1px 1px 1px #ffcc80}
+div#download_bar a.gray{background-image:none;background:#7f7f7f;border-top:1px solid #bfbfbf;}
+div#download_bar a.gray span{text-shadow:1px 1px 1px #fff}
+img.screen_img{background:url("../imgs/loading.gif") 50% 40% no-repeat}
+.green{color:#008000}
+.blue{color:#004080}
+.red{color:#f00}
+span.platform{float:left;width:13px;height:44px;text-indent:-99em;background-repeat:no-repeat;margin:0 3px 0 -5px}
+body.iphone span.platform{margin-top:2px}
+span.platform.android{background-image:url("../imgs/platforms/android.png")}
+span.platform.iphone{background-image:url("../imgs/platforms/iphone.png")}
+span.platform.ipad{background-image:url("../imgs/platforms/ipad.png")}
+span.platform.lephone{background-image:url("../imgs/platforms/lephone.png")}
+img.emotion{vertical-align:bottom}
+span.emotion{color:#fff;background:#52a2f2;font-weight:bold;text-shadow:none;margin:0 2px;-webkit-border-radius:2px;padding:0 1px}
+img.location{width:21px;height:21px;vertical-align:bottom}
+li a.sys-anno{background-position:0 -478px;background-repeat:no-repeat;padding-left:25px}
+li a.admin-anno{background-position:0 -519px;background-repeat:no-repeat;padding-left:25px}
+span.point{background-position:9px 0;background-repeat:no-repeat;display:block;float:right;font-size:13px;margin-top:-16px;padding:20px 0 0;position:absolute;right:15px;text-align:center;top:30px;width:38px}
+span.point.mid{top:50%}
+span.status{display:block;float:right;font-size:13px;text-align:center;margin-right:40px}
+span.status.status1{color:#008000}
+i.icon{padding:2px 5px 3px 22px;font-size:13px;background-repeat:no-repeat}
+i.icon.coins{background-position:0 -40px;padding-left:25px}
+i.icon.point{background-position:0 0}
+span.icon{height:18px;margin-top:-9px;position:absolute;right:5px;top:50%;width:14px;background-repeat:no-repeat}
+span.icon.arrow{background-position:0 -437px}
+i.smallicon{background-repeat:no-repeat;padding:1px 5px 2px 20px}
+i.smallicon.time{background-position:-99px 0}
+i.smallicon.distance{background-position:-99px -30px;padding-left:17px}
+i.smallicon.game{background-position:-99px -57px}
+i.smallicon.user{background-position:-99px -90px}
+i.smallicon.comment{background-position:-99px -117px}
+a.smallbtn span{background-repeat:no-repeat;padding-left:23px;padding-top:1px;padding-bottom:1px}
+.smallbtn.blue{background:#2795d4;background-image:-webkit-gradient(linear,0% 0%,0% 100%,from(#43a7d8),to(#1578bc))}
+.smallbtn.blue.down{background:#43a7d8;background-image:-webkit-gradient(linear,0% 0%,0% 100%,from(#79c4e9),to(#3691cf))}
+.smallbtn.red{background:#2795d4;background-image:-webkit-gradient(linear,0% 0%,0% 100%,from(#f99f2a),to(#d35906))}
+.smallbtn.red.down{background:#f5b35d;background-image:-webkit-gradient(linear,0% 0%,0% 100%,from(#f5b35d),to(#dd7a37))}
+.smallbtn.green{background:#2795d4;background-image:-webkit-gradient(linear,0% 0%,0% 100%,from(#2ab014),to(#096c12))}
+.smallbtn.green.down{background:#5ace47;background-image:-webkit-gradient(linear,0% 0%,0% 100%,from(#5ace47),to(#1f8e29))}
+.smallbtn.orange{background:#d87114;background-image:-webkit-gradient(linear,0% 0%,0% 100%,from(#f99e2b),to(#bf4e00))}
+.smallbtn.orange.down{background:#bf4e00;background-image:-webkit-gradient(linear,0% 0%,0% 100%,from(#f3b76a),to(#de7816))}
+.smallbtn.gray{background:#bbb;background-image:-webkit-gradient(linear,0% 0%,0% 100%,from(#ccc),to(#666))}
+.smallbtn.gray.down{background:#ccc;background-image:-webkit-gradient(linear,0% 0%,0% 100%,from(#666),to(#ccc))}
+.smallbtn.msg span{background-position:0 2px}
+.smallbtn.leaderboard span{background-position:0 -268px}
+.smallbtn.invite span{background-position:0 -29px}
+.smallbtn.topics span{background-position:0 -148px}
+.smallbtn.newtopic span{background-position:0 -178px}
+.smallbtn.user span{background-position:0 -89px}
+.smallbtn.reply span{background-position:0 -120px}
+.smallbtn.time span{background-position:0 -239px}
+.smallbtn.attention span{background-position:0 -298px}
+.smallbtn.fav span{background-position:0 -329px}
+.smallbtn.install span{background-position:0 -359px}
+.smallbtn.dashboard span{background-position:0 -390px}
+.smallbtn.cancel span{background-position:0 -419px}
+.smallbtn.achievement span{background-position:0 -450px}
+.smallbtn.challenge span{background-position:0 -480px}
+.smallbtn.back span{background-position:0 -508px}
+.smallbtn.time.desc span{background-position:0 -538px}
+.smallbtn.time.asc span{background-position:0 -568px}
+.medal{background-repeat:no-repeat;padding:0 0 0 17px}
+.medal.medal1{background-position:0 -318px}
+.medal.medal2{background-position:0 -358px}
+.medal.medal3{background-position:0 -398px}
+.sort{background-repeat:no-repeat;padding:1px 0 1px 28px}
+.sort.num1{background-position:0 -200px}
+.sort.num2{background-position:0 -240px}
+.sort.num3{background-position:0 -280px}
+li > span.loading{background-position:0 1px;background-repeat:no-repeat;padding:0 0 0 20px;color:#6c90be}
+td > span.loading{background-position:0 1px;background-repeat:no-repeat;padding:0 0 0 20px;color:#6c90be}
+i > span.loading{background-position:0 2px;background-repeat:no-repeat;padding:0 0 0 14px;color:#ccc}
+ul.ls > li.more > a.loading{background-position:0 3px;background-repeat:no-repeat;color:#ccc}
+span.stared{background-repeat:no-repeat;background-position:3px -638px;display:block;float:right;position:absolute;right:-1px;bottom:-1px;width:29px;height:29px}
+span.result{background-repeat:no-repeat;text-indent:-99em;width:30px;height:30px;display:block}
+span.result.win{background-position:0 0}
+span.result.loss{background-position:0 -30px}
+span.result.draw{background-position:0 -60px}
+span.result.cancel{background-position:0 -90px}
+span.achievement_progress{background-color:#d4d4d4;-webkit-border-radius:5px;display:inline-block;height:10px;width:50px}
+span.achievement_progress span{text-indent:-99em;display:block;height:10px;-webkit-border-radius:5px;background-color:#2491d1}
+table.games td{width:100px;height:100px}
+/* some unsets - more probably needed */
+.ui-mobile, .ui-mobile body { height: 100%; }
+.ui-mobile fieldset, .ui-page { padding: 0; margin: 0; }
+.ui-mobile a img, .ui-mobile fieldset { border: 0; }
+
+/* responsive page widths */
+.ui-mobile-viewport {  margin: 0; overflow-x: visible; -webkit-text-size-adjust: none; -ms-text-size-adjust:none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
+/* Issue #2066 */
+body.ui-mobile-viewport,
+div.ui-mobile-viewport { overflow-x: hidden; }
+
+/* "page" containers - full-screen views, one should always be in view post-pageload */
+.ui-page { top: 0; left: 0; width: 100%; min-height: 100%; position: absolute; display: none; border: 0; }
+.ui-container { top: 44px; left: 0; bottom:46px; width: 100%; display: none; border: 0; }
+.ui-mobile .ui-page-active { display: block; overflow: visible; }
+
+/* on ios4, setting focus on the page element causes flashing during transitions when there is an outline, so we turn off outlines */
+.ui-page { outline: none; }
+
+/* native overflow scrolling */
+.ui-page.ui-mobile-touch-overflow,
+.ui-mobile-touch-overflow.ui-native-fixed .ui-content {
+	overflow: auto;
+	height: 100%;
+	left: 0;
+	right: 0;
+	-webkit-overflow-scrolling: touch;
+	-moz-overflow-scrolling: touch;
+	-o-overflow-scrolling: touch;
+	-ms-overflow-scrolling: touch;
+	overflow-scrolling: touch;
+}
+.ui-page.ui-mobile-touch-overflow,
+.ui-page.ui-mobile-touch-overflow * {
+	/* some level of transform keeps elements from blinking out of visibility on iOS */
+	-webkit-transform: rotateY(0);
+}
+.ui-page.ui-mobile-pre-transition {
+	display: block;
+}
+.ui-mobile-touch-overflow.ui-native-fixed .ui-content .ui-listview {
+	margin-top: 0;
+}
+.ui-mobile-touch-overflow.ui-native-fixed .ui-content .ui-listview-inset {
+	margin-top: 1em;
+}
+.ui-mobile-touch-overflow.ui-native-fixed .ui-header .ui-btn { 
+	z-index: 10;
+}
+
+/* loading screen */
+.ui-loading .ui-mobile-viewport { overflow: hidden !important; }
+.ui-loading .ui-loader { display: block; }
+.ui-loading .ui-page { overflow: hidden;  }
+.ui-loader { display: none; position: absolute; opacity: .85; z-index: 100; left: 50%; width: 200px; margin-left: -130px; margin-top: -35px; padding: 10px 30px; }
+.ui-loader h1 { font-size: 15px; text-align: center; }
+.ui-loader .ui-icon { position: static; display: block; opacity: .9; margin: 0 auto; width: 35px; height: 35px; background-color: transparent; }
+
+/*fouc*/
+.ui-mobile-rendering > * { visibility: hidden; }
+
+/** tranistion **/
+.spin  {
+	-webkit-transform: rotate(360deg);
+	-webkit-animation-name: spin;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-iteration-count:  infinite;
+	-webkit-animation-timing-function: linear;
+}
+@-webkit-keyframes spin {
+	from {-webkit-transform: rotate(0deg);}
+  	to {-webkit-transform: rotate(360deg);}
+}
+
+/* Transitions from jQtouch (with small modifications): http://www.jqtouch.com/
+Built by David Kaneda and maintained by Jonathan Stark.
+*/
+.in, .out {
+	-webkit-animation-timing-function: ease-in-out;
+	-webkit-animation-duration: 350ms;
+}
+
+
+.slide.out {
+	-webkit-transform: translateX(-100%);
+	-webkit-animation-name: slideouttoleft;
+}
+
+.slide.in {
+	-webkit-transform: translateX(0);
+	-webkit-animation-name: slideinfromright;
+}
+
+.slide.out.reverse {
+	-webkit-transform: translateX(100%);
+	-webkit-animation-name: slideouttoright;
+}
+
+.slide.in.reverse {
+	-webkit-transform: translateX(0);
+	-webkit-animation-name: slideinfromleft;
+}
+
+.slideup.out {
+	-webkit-animation-name: dontmove;
+	z-index: 0;
+}
+
+.slideup.in {
+	-webkit-transform: translateY(0);
+	-webkit-animation-name: slideinfrombottom;
+	z-index: 10;
+}
+
+.slideup.in.reverse {
+	z-index: 0;
+	-webkit-animation-name: dontmove;
+}
+
+.slideup.out.reverse {
+	-webkit-transform: translateY(100%);
+	z-index: 10;
+	-webkit-animation-name: slideouttobottom;
+}
+
+.slidedown.out {
+	-webkit-animation-name: dontmove;
+	z-index: 0;
+}
+
+.slidedown.in {
+	-webkit-transform: translateY(0);
+	-webkit-animation-name: slideinfromtop;
+	z-index: 10;
+}
+
+.slidedown.in.reverse {
+	z-index: 0;
+	-webkit-animation-name: dontmove;
+}
+
+.slidedown.out.reverse {
+	-webkit-transform: translateY(-100%);
+	z-index: 10;
+	-webkit-animation-name: slideouttotop;
+}
+
+@-webkit-keyframes slideinfromright {
+    from { -webkit-transform: translateX(100%); }
+    to { -webkit-transform: translateX(0); }
+}
+
+@-webkit-keyframes slideinfromleft {
+    from { -webkit-transform: translateX(-100%); }
+    to { -webkit-transform: translateX(0); }
+}
+
+@-webkit-keyframes slideouttoleft {
+    from { -webkit-transform: translateX(0); }
+    to { -webkit-transform: translateX(-100%); }
+}
+
+@-webkit-keyframes slideouttoright {
+    from { -webkit-transform: translateX(0); }
+    to { -webkit-transform: translateX(100%); }
+}
+
+@-webkit-keyframes slideinfromtop {
+    from { -webkit-transform: translateY(-100%); }
+    to { -webkit-transform: translateY(0); }
+}
+
+@-webkit-keyframes slideinfrombottom {
+    from { -webkit-transform: translateY(100%); }
+    to { -webkit-transform: translateY(0); }
+}
+
+@-webkit-keyframes slideouttobottom {
+    from { -webkit-transform: translateY(0); }
+    to { -webkit-transform: translateY(100%); }
+}
+
+@-webkit-keyframes slideouttotop {
+    from { -webkit-transform: translateY(0); }
+    to { -webkit-transform: translateY(-100%); }
+}
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@-webkit-keyframes fadeout {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.fade.out {
+	z-index: 0;
+	-webkit-animation-name: fadeout;
+}
+
+.fade.in {
+	opacity: 1;
+	z-index: 10;
+	-webkit-animation-name: fadein;
+}
+
+/* The properties in this rule are only necessary for the 'flip' transition.
+ * We need specify the perspective to create a projection matrix. This will add
+ * some depth as the element flips. The depth number represents the distance of
+ * the viewer from the z-plane. According to the CSS3 spec, 1000 is a moderate
+ * value.
+ */
+.viewport-flip {
+	-webkit-perspective: 1000;
+	position: absolute;
+}
+
+.ui-mobile-viewport-transitioning,
+.ui-mobile-viewport-transitioning .ui-page {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.flip {
+	-webkit-animation-duration: .65s;
+	-webkit-backface-visibility:hidden;
+	-webkit-transform:translateX(0); /* Needed to work around an iOS 3.1 bug that causes listview thumbs to disappear when -webkit-visibility:hidden is used. */
+}
+
+.flip.out {
+	-webkit-transform: rotateY(-180deg) scale(.8);
+	-webkit-animation-name: flipouttoleft;
+}
+
+.flip.in {
+	-webkit-transform: rotateY(0) scale(1);
+	-webkit-animation-name: flipinfromleft;
+}
+
+/* Shake it all about */
+
+.flip.out.reverse {
+	-webkit-transform: rotateY(180deg) scale(.8);
+	-webkit-animation-name: flipouttoright;
+}
+
+.flip.in.reverse {
+	-webkit-transform: rotateY(0) scale(1);
+	-webkit-animation-name: flipinfromright;
+}
+
+@-webkit-keyframes flipinfromright {
+    from { -webkit-transform: rotateY(-180deg) scale(.8); }
+    to { -webkit-transform: rotateY(0) scale(1); }
+}
+
+@-webkit-keyframes flipinfromleft {
+    from { -webkit-transform: rotateY(180deg) scale(.8); }
+    to { -webkit-transform: rotateY(0) scale(1); }
+}
+
+@-webkit-keyframes flipouttoleft {
+    from { -webkit-transform: rotateY(0) scale(1); }
+    to { -webkit-transform: rotateY(-180deg) scale(.8); }
+}
+
+@-webkit-keyframes flipouttoright {
+    from { -webkit-transform: rotateY(0) scale(1); }
+    to { -webkit-transform: rotateY(180deg) scale(.8); }
+}
+
+
+/* Hackish, but reliable. */
+
+@-webkit-keyframes dontmove {
+    from { opacity: 1; }
+    to { opacity: 1; }
+}
+
+.pop {
+	-webkit-transform-origin: 50% 50%;
+}
+
+.pop.in {
+	-webkit-transform: scale(1);
+    opacity: 1;
+	-webkit-animation-name: popin;
+	z-index: 10;
+}
+
+.pop.in.reverse {
+	z-index: 0;
+	-webkit-animation-name: dontmove;
+}
+
+.pop.out.reverse {
+	-webkit-transform: scale(.2);
+	opacity: 0;
+	-webkit-animation-name: popout;
+	z-index: 10;
+}
+
+@-webkit-keyframes popin {
+    from {
+        -webkit-transform: scale(.2);
+        opacity: 0;
+    }
+    to {
+        -webkit-transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes popout {
+    from {
+        -webkit-transform: scale(1);
+        opacity: 1;
+    }
+    to {
+        -webkit-transform: scale(.2);
+        opacity: 0;
+    }
+}
