@@ -5402,345 +5402,169 @@ Swipe.prototype = {
 }();
 (function() {
 
-  (function() {
-    var create_uuid, getUrl, methodMap, orgSync;
-    orgSync = $bb.sync;
-    getUrl = function(object) {
-      if (!(object && object.url)) return null;
-      if (_.isFunction(object.url)) {
-        return object.url();
-      } else {
-        return object.url;
-      }
-    };
-    methodMap = {
-      'create': 'POST',
-      'update': 'PUT',
-      'delete': 'DELETE',
-      'read': 'GET'
-    };
-    create_uuid = function() {
-      var S4;
-      S4 = function() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-      };
-      return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
-    };
-    $bb.sync = function(method, model, options) {
-      var data, success, uuid;
-      uuid = $.user_id();
-      data = options.data || model.data;
-      options.data = _.extend({
-        uuid: uuid,
-        windowname: window['windowname']
-      }, data);
-      success = options.success;
-      options.success = function(resp, status, xhr) {
-        model.trigger('finish:sync', model, method, model, resp, status, xhr, options);
-        if (success) return success(resp, status, xhr);
-      };
-      model.trigger('start:sync', model, method, model, options);
-      if (!options.url) options.url = getUrl(model);
-      if (window['api_base']) options.url = window['api_base'] + options.url;
-      return $.ajax(_.extend(options, {
-        type: methodMap[method],
-        dataType: 'json',
-        windowname: window['windowname']
-      }));
-    };
-    return _.extend($, {
-      user_id: function() {
-        var uuid;
-        uuid = $.cookie('uuid');
-        if (uuid === null) {
-          uuid = create_uuid();
-          $.cookie('uuid', uuid, {
-            expires: 40000
+  $ma.view(function() {
+    return {
+      MainPage$Page: {
+        $pagePath: 'main',
+        transition: 'none',
+        make_views: function() {
+          return {
+            top_banner: new $views.TopBanner({}),
+            tab_container: new $views.TabContainer(this.main_tab())
+          };
+        },
+        nav: function() {
+          return this.views.tab_container.nav(this.params);
+        },
+        main_tab: function() {
+          var _this = this;
+          return {
+            tabs: {
+              home: '推荐',
+              category: '分类',
+              search: '搜索'
+            },
+            views: function(nav) {
+              return _this.main_tab_view(nav);
+            },
+            "default": 'home',
+            page: this
+          };
+        },
+        main_tab_view: function(tabnav) {
+          switch (tabnav) {
+            case "home":
+              return new $views.Home;
+            case "category":
+              return new $views.Categorys;
+            case "search":
+              return new $views.Search({
+                page: this
+              });
+          }
+        }
+      },
+      CategoryPage$Page: {
+        $pagePath: 'category',
+        transition: 'none',
+        make_views: function() {
+          return {
+            top_banner: new $views.TopBanner,
+            title: new $views.TitleBar,
+            items: new $views.CategoryItems
+          };
+        },
+        nav: function() {
+          this.views.title.$el.html(this.params['name']);
+          return this.views.items.category(this.params['id']);
+        }
+      },
+      SearchPage$Page: {
+        $pagePath: 'search',
+        transition: 'none',
+        make_views: function() {
+          return {
+            top_banner: new $views.TopBanner,
+            title: new $views.TitleBar,
+            items: new $views.SearchItems
+          };
+        },
+        nav: function() {
+          var keyword;
+          keyword = this.params['keyword'];
+          this.views.title.$el.html("搜索 '" + keyword + "'");
+          return this.views.items.search(keyword);
+        }
+      },
+      Home$Container: {
+        make_views: function() {
+          return {
+            banner: new $views.HomeBanner,
+            items: new $views.FeatureItems
+          };
+        }
+      },
+      Search$Container: {
+        initialize: function() {
+          $views.Container.prototype.initialize.apply(this, arguments);
+          this.views.bar.bind('search', this.search, this);
+          return this.page = this.options.page;
+        },
+        make_views: function() {
+          return {
+            bar: new $views.SearchBar
+          };
+        },
+        search: function(keyword) {
+          return this.page.navigate("#search?keyword=" + keyword, true);
+        }
+      },
+      GameInfo$Page: {
+        $pagePath: 'game',
+        transition: 'none',
+        initialize: function(options) {
+          $views.Page.prototype.initialize.call(this, options);
+          return this.bind('show', function() {
+            if (this.game.unfetched) {
+              return this.game.fetch({
+                success: _.bind(this.finishFetch, this)
+              });
+            }
           });
-        }
-        return uuid;
-      },
-      cookie: function(name, value, options) {
-        var cookie, cookieValue, cookies, date, domain, expires, path, secure, _i, _len;
-        if (options == null) options = {};
-        if (typeof value !== 'undefined') {
-          if (value === null) {
-            value = '';
-            options.expires = -1;
+        },
+        finishFetch: function(model, resp) {
+          this.views.info.finishFetch(model, resp);
+          return this.game.unfetched = false;
+        },
+        nav: function() {
+          var new_game;
+          new_game = new $models.Item({
+            id: this.params['id'],
+            name: this.params['name']
+          });
+          if (this.game === void 0 || this.game.id + '' !== new_game.id) {
+            this.game = new_game;
+            this.game.unfetched = true;
+            return this.views.info.set_game(this.game);
           }
-          expires = '';
-          if (options.expires && (typeof options.expires === 'number' || options.expires.toUTCString)) {
-            if (typeof options.expires === 'number') {
-              date = new Date();
-              date.setTime(date.getTime() + (options.expires * 24 * 60 * 60 * 1000));
-            } else {
-              date = options.expires;
-            }
-            expires = '; expires=' + date.toUTCString();
-          }
-          path = options.path ? '; path=' + options.path : '';
-          domain = options.domain ? '; domain=' + options.domain : '';
-          secure = options.secure ? '; secure' : '';
-          return document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
-        } else {
-          cookieValue = null;
-          if (document.cookie && document.cookie !== '') {
-            cookies = document.cookie.split(';');
-            for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-              cookie = cookies[_i];
-              cookie = cookie.replace(/^\s\s*/, "").replace(/\s\s*$/, "");
-              if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-              }
-            }
-          }
-          return cookieValue;
+        },
+        make_views: function() {
+          return {
+            top_banner: new $views.TopBanner,
+            info: new $views.ItemView
+          };
         }
       },
-      czero: function(m) {
-        if (m < 10) {
-          return '0' + m;
-        } else {
-          return m;
+      ScreenShot$Page: {
+        $pagePath: 'ss',
+        transition: 'none',
+        nav: function() {
+          return this.views.image.set_img(this.params['img']);
+        },
+        make_views: function() {
+          return {
+            image: new $views.ImageView
+          };
         }
-      },
-      fdate: function(d) {
-        return [d.getFullYear(), $.czero(d.getMonth() + 1), $.czero(d.getDate())].join('');
-      },
-      week: function(d) {
-        return ['日', '一', '二', '三', '四', '五', '六'][d.getDay()];
-      },
-      pdate: function(d) {
-        d = String(d);
-        return new Date(Number(d.slice(0, 4)), Number(d.slice(4, 6)) - 1, Number(d.slice(6)));
-      },
-      download: function(game) {
-        return window.location.href = game.get('download_url');
-      },
-      trac_download: function(gid, from) {
-        if (from == null) from = "bar";
-        $.ajax({
-          url: window['api_base'] + '/record/trac',
-          data: {
-            from: from,
-            to: 'download',
-            game_id: gid,
-            uuid: $.user_id(),
-            windowname: true
-          },
-          type: 'GET',
-          dataType: 'json',
-          windowname: true,
-          success: function() {}
-        });
-        return true;
       }
-    });
-  }).call(this);
+    };
+  });
 
 }).call(this);
 (function() {
 
-  $ma.view(function() {
+  $ma.model(function() {
     return {
-      TopBanner: {
-        tagName: 'div',
-        className: 'top-banner',
-        make: function(tagName, attributes, content) {
-          var el;
-          el = this._sup.make.apply(this, arguments);
-          $(el).html('\
-        <h1>晓明品酒</h1>\
-      ');
-          return el;
-        }
-      },
-      TitleBar: {
-        tagName: 'div',
-        className: 'title-bar'
-      },
-      HomeBanner$DataView: {
-        tagName: 'div',
-        className: 'banner',
-        colls: new $colls.Advs,
-        initialize: function() {
-          this._sup.initialize.apply(this, arguments);
-          this.$el.append('<div class="loader" style="display:none;">loading...</div>');
-          this.$loader = this.$('div.loader');
-          this.$ul = this.$('ul#advs');
-          return this.$nav = this.$('ul.nav');
+      Adv: {},
+      Category: {},
+      Item: {
+        url: function() {
+          return '/item?id=' + this.id;
         },
-        make: function(tagName, attributes, content) {
-          var el;
-          el = document.createElement(tagName);
-          if (attributes) $(el).attr(attributes);
-          $(el).html('<div id="slider" class="swipe"><ul id="advs"></ul>\
-        <ul class="nav"></ul></div>');
-          return el;
-        },
-        clear: function() {
-          return this.$ul.html('');
-        },
-        addItem: function(model) {
-          var ad, li;
-          ad = model.toData();
-          li = $("<li style='display: none;'><a href='#game?id=" + ad.product_id + "&from=banner'><img src='" + ad.pic + "'/></a></li>");
-          this.$ul.append(li);
-          return this.$nav.append('<li></li>');
-        },
-        finishFetch: function(collection, resp) {
-          var _this = this;
-          (this.$ul.find('li:first-child')).css('display', 'block');
-          (this.$nav.find('li:first-child')).addClass('selected');
-          return this.swiper = new Swipe((this.$('#slider'))[0], {
-            speed: 400,
-            auto: 5000,
-            callback: function(event, index, elem) {
-              (_this.$nav.find('li')).removeClass('selected');
-              return $(_this.$nav.find('li')[index]).addClass('selected');
-            }
-          });
-        }
-      },
-      Items$ListView: {
-        className: 'games',
-        tmpl: $tmpls.game_item
-      },
-      FeatureItems$Items: {
-        colls: new $colls.HomeItems
-      },
-      CategoryItems$Items: {
-        initialize: function() {
-          this.colls = new $colls.CategoryItems;
-          this.colls.category(this.options['cate']);
-          return $views.Items.prototype.initialize.apply(this, arguments);
-        }
-      },
-      SearchItems$Items: {
-        colls: new $colls.SearchItems,
-        search: function(keyword) {
-          this.colls.search(keyword);
-          return this.refresh();
-        }
-      },
-      SearchBar: {
-        tagName: 'div',
-        id: 'search_bar',
-        className: 'subbar',
-        initialize: function() {
-          var _this = this;
-          $views.Base.prototype.initialize.apply(this, arguments);
-          this.$input = this.$('input');
-          return this.$input.bind('change', function() {
-            return _this.trigger('search', _this.$input.val());
-          });
-        },
-        make: function(tagName, attributes, content) {
-          var el;
-          el = document.createElement(tagName);
-          if (attributes) $(el).attr(attributes);
-          $(el).html('<input type="search" placeholder="在这里输入文字"/>');
-          return el;
-        }
-      },
-      ItemView: {
-        tagName: 'div',
-        id: 'game_info',
-        className: 'ui-container',
-        initialize: function() {
-          this._sup.initialize.apply(this, arguments);
-          this.$icon = this.$('#info img');
-          this.$name = this.$('#info p b');
-          this.$ext_info = this.$('#info p.ext_info');
-          this.$infos = this.$('#infos');
-          this.$loader = this.$('.loading');
-          return this.$content = this.$('#content');
-        },
-        set_game: function(game) {
-          this.game = game;
-          this.clear();
-          this.$content.hide();
-          return this.$loader.show();
-        },
-        clear: function() {
-          this.lastScroll = 0;
-          this.$icon.attr('src', this.game.get('icon') || '');
-          this.$name.html(this.game.get('name') || '');
-          this.$ext_info.html('');
-          return (this.$('#evaluator,#screen_shots')).html('');
-        },
-        finishFetch: function(model, resp) {
-          var data, desc, i, infos, name, ss, sshtml, sslist, value;
-          data = model.toData();
-          ss = data['screenshots'];
-          desc = data['description'].replace(/\n/g, '<br/>');
-          this.$name.html(data['name']);
-          this.$icon.attr('src', data['icon_full']);
-          this.$ext_info.html($tmpls.item_ext_info(data));
-          infos = (function() {
-            var _ref, _results;
-            _ref = data['infos'];
-            _results = [];
-            for (name in _ref) {
-              value = _ref[name];
-              _results.push("<li><b>" + name + ":</b>" + value + "</li>");
-            }
-            return _results;
-          })();
-          infos = infos.join('');
-          (this.$('#infos')).html("        <ul>" + infos + "</ul>      ");
-          (this.$('#evaluator')).html("        <p>" + desc + "</p>      ");
-          sshtml = ["<ul class='gallery'>"];
-          sslist = (_.map(ss, function(s) {
-            return s.big;
-          })).join(';');
-          i = 0;
-          _.each(ss, function(s) {
-            sshtml.push("<li><a href='#ss?img=" + s.big + "'><img src='" + s.small + "' index='" + i + "'/></a></li>");
-            return i++;
-          });
-          sshtml.push('</ul>');
-          (this.$('#screen_shots')).html(sshtml.join(''));
-          this.$loader.hide();
-          return this.$content.show();
-        },
-        make: function(tagName, attributes, content) {
-          var el;
-          el = this._sup.make.apply(this, arguments);
-          $(el).html('\
-        <div id="info">\
-          <p><b></b></p>\
-          <img class="icon" src="" />\
-          <p class="ext_info"></p>\
-        </div>\
-        <div id="content" style="display: none;">\
-          <h4>详细参数</h4>\
-          <div id="infos"></div>\
-          <h4>美酒介绍</h4>\
-          <div id="evaluator"></div>\
-          <h4>图片展示</h4>\
-          <div id="screen_shots"></div>\
-        </div>\
-        <div class="loading" style="display: none;">游戏信息加载中...</div>');
-          return el;
-        }
-      },
-      ImageView: {
-        tagName: 'div',
-        id: 'image',
-        initialize: function() {
-          this._sup.initialize.apply(this, arguments);
-          return this.$img = this.$('img');
-        },
-        set_img: function(url) {
-          return this.$img.attr('src', url);
-        },
-        make: function(tagName, attributes, content) {
-          var el;
-          el = this._sup.make.apply(this, arguments);
-          $(el).html('<img src="" style="width: 100%;" class="screen_img"/>');
-          return el;
+        parse: function(resp, xhr) {
+          resp.star_count = Math.floor(resp.level / 2);
+          resp.unstar_count = 5 - resp.star_count;
+          return resp;
         }
       }
     };
@@ -5801,6 +5625,10 @@ Swipe.prototype = {
           if ((_base = this.options).data == null) _base.data = {};
           return this.options.data['category_id'] = cid;
         }
+      },
+      Categories$Collections: {
+        model: $models.Category,
+        url: '/categorys'
       },
       SearchItems$Collections: {
         model: $models.Item,
@@ -6337,186 +6165,356 @@ Swipe.prototype = {
 			}
 		}
 	});
-})(Zepto);$tmpls.game_item = _.template('<li>  <a class="content" href="#game?id=${id}&name=${name}">  	<img class="icon" src="${icon}" />  	<p><b>${name}</b></p>  	<p>      {% for(var i=0;i<star_count;i++){ %}<i class="star">s</i>{% } %}{% for(var i=0;i<unstar_count;i++){ %}<i class="star empty">u</i>{% } %}      &nbsp;${price}元</p>    <p class="slug">${slug}&nbsp;</p>  </a></li>');$tmpls.item_ext_info = _.template('<i class=\'category\'>分类: ${category}</i>&nbsp;&nbsp;<i class=\'size\'>价格: <span class="red">${price}</span>元</i>&nbsp;&nbsp;<i class=\'size\'>好评: {% for(var i=0;i<star_count;i++){ %}<i class="star">s</i>{% } %}{% for(var i=0;i<unstar_count;i++){ %}<i class="star empty">u</i>{% } %}</i><br/>');(function() {
+})(Zepto);$tmpls.game_item = _.template('<li>  <a class="content" href="#game?id=${id}&name=${name}">  	<img class="icon" src="${icon}" />  	<p><b>${name}</b></p>  	<p>      {% for(var i=0;i<star_count;i++){ %}<i class="star">s</i>{% } %}{% for(var i=0;i<unstar_count;i++){ %}<i class="star empty">u</i>{% } %}      &nbsp;${price}元</p>    <p class="slug">${slug}&nbsp;</p>  </a></li>');$tmpls.item_ext_info = _.template('<i class=\'category\'>分类: ${category}</i>&nbsp;&nbsp;<i class=\'size\'>价格: <span class="red">${price}</span>元</i>&nbsp;&nbsp;<i class=\'size\'>好评: {% for(var i=0;i<star_count;i++){ %}<i class="star">s</i>{% } %}{% for(var i=0;i<unstar_count;i++){ %}<i class="star empty">u</i>{% } %}</i><br/>');$tmpls.category_item = _.template('<li>  <a class="content" href="#category?id=${id}&name=${name}">    <img class="icon" src="${icon}" />    <p>${name}</p>  </a></li>');(function() {
 
-  $ma.view(function() {
-    return {
-      MainPage$Page: {
-        $pagePath: 'main',
-        transition: 'none',
-        make_views: function() {
-          return {
-            top_banner: new $views.TopBanner({}),
-            tab_container: new $views.TabContainer(this.main_tab())
-          };
-        },
-        nav: function() {
-          return this.views.tab_container.nav(this.params);
-        },
-        main_tab: function() {
-          var _this = this;
-          return {
-            tabs: {
-              home: '推荐',
-              category: '分类',
-              search: '搜索'
-            },
-            views: function(nav) {
-              return _this.main_tab_view(nav);
-            },
-            "default": 'home',
-            page: this
-          };
-        },
-        category_tab: function() {
-          var _this = this;
-          return {
-            tabs: {
-              bai: '白酒',
-              wine: '葡萄酒',
-              yang: '洋酒'
-            },
-            views: function(nav) {
-              return _this.cate_tab_view(nav);
-            },
-            "default": 'wine',
-            page: this
-          };
-        },
-        main_tab_view: function(tabnav) {
-          switch (tabnav) {
-            case "home":
-              return new $views.Home;
-            case "category":
-              return new $views.SubTabContainer(this.category_tab());
-            case "search":
-              return new $views.Search({
-                page: this
-              });
-          }
-        },
-        cate_tab_view: function(tabnav) {
-          switch (tabnav) {
-            case "bai":
-              return new $views.CategoryItems({
-                cate: 2
-              });
-            case "wine":
-              return new $views.CategoryItems({
-                cate: 1
-              });
-            case "yang":
-              return new $views.CategoryItems({
-                cate: 3
-              });
-          }
-        }
-      },
-      SearchPage$Page: {
-        $pagePath: 'search',
-        transition: 'none',
-        make_views: function() {
-          return {
-            top_banner: new $views.TopBanner,
-            title: new $views.TitleBar,
-            items: new $views.SearchItems
-          };
-        },
-        nav: function() {
-          var keyword;
-          keyword = this.params['keyword'];
-          this.views.title.$el.html("搜索 '" + keyword + "'");
-          return this.views.items.search(keyword);
-        }
-      },
-      Home$Container: {
-        make_views: function() {
-          return {
-            banner: new $views.HomeBanner,
-            items: new $views.FeatureItems
-          };
-        }
-      },
-      Search$Container: {
-        initialize: function() {
-          $views.Container.prototype.initialize.apply(this, arguments);
-          this.views.bar.bind('search', this.search, this);
-          return this.page = this.options.page;
-        },
-        make_views: function() {
-          return {
-            bar: new $views.SearchBar
-          };
-        },
-        search: function(keyword) {
-          return this.page.navigate("#search?keyword=" + keyword, true);
-        }
-      },
-      GameInfo$Page: {
-        $pagePath: 'game',
-        transition: 'none',
-        initialize: function(options) {
-          $views.Page.prototype.initialize.call(this, options);
-          return this.bind('show', function() {
-            if (this.game.unfetched) {
-              return this.game.fetch({
-                success: _.bind(this.finishFetch, this)
-              });
-            }
-          });
-        },
-        finishFetch: function(model, resp) {
-          this.views.info.finishFetch(model, resp);
-          return this.game.unfetched = false;
-        },
-        nav: function() {
-          var new_game;
-          new_game = new $models.Item({
-            id: this.params['id'],
-            name: this.params['name']
-          });
-          if (this.game === void 0 || this.game.id + '' !== new_game.id) {
-            this.game = new_game;
-            this.game.unfetched = true;
-            return this.views.info.set_game(this.game);
-          }
-        },
-        make_views: function() {
-          return {
-            top_banner: new $views.TopBanner,
-            info: new $views.ItemView
-          };
-        }
-      },
-      ScreenShot$Page: {
-        $pagePath: 'ss',
-        transition: 'none',
-        nav: function() {
-          return this.views.image.set_img(this.params['img']);
-        },
-        make_views: function() {
-          return {
-            image: new $views.ImageView
-          };
-        }
+  (function() {
+    var create_uuid, getUrl, methodMap, orgSync;
+    orgSync = $bb.sync;
+    getUrl = function(object) {
+      if (!(object && object.url)) return null;
+      if (_.isFunction(object.url)) {
+        return object.url();
+      } else {
+        return object.url;
       }
     };
-  });
+    methodMap = {
+      'create': 'POST',
+      'update': 'PUT',
+      'delete': 'DELETE',
+      'read': 'GET'
+    };
+    create_uuid = function() {
+      var S4;
+      S4 = function() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+      };
+      return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
+    };
+    $bb.sync = function(method, model, options) {
+      var data, success, uuid;
+      uuid = $.user_id();
+      data = options.data || model.data;
+      options.data = _.extend({
+        uuid: uuid,
+        windowname: window['windowname']
+      }, data);
+      success = options.success;
+      options.success = function(resp, status, xhr) {
+        model.trigger('finish:sync', model, method, model, resp, status, xhr, options);
+        if (success) return success(resp, status, xhr);
+      };
+      model.trigger('start:sync', model, method, model, options);
+      if (!options.url) options.url = getUrl(model);
+      if (window['api_base']) options.url = window['api_base'] + options.url;
+      return $.ajax(_.extend(options, {
+        type: methodMap[method],
+        dataType: 'json',
+        windowname: window['windowname']
+      }));
+    };
+    return _.extend($, {
+      user_id: function() {
+        var uuid;
+        uuid = $.cookie('uuid');
+        if (uuid === null) {
+          uuid = create_uuid();
+          $.cookie('uuid', uuid, {
+            expires: 40000
+          });
+        }
+        return uuid;
+      },
+      cookie: function(name, value, options) {
+        var cookie, cookieValue, cookies, date, domain, expires, path, secure, _i, _len;
+        if (options == null) options = {};
+        if (typeof value !== 'undefined') {
+          if (value === null) {
+            value = '';
+            options.expires = -1;
+          }
+          expires = '';
+          if (options.expires && (typeof options.expires === 'number' || options.expires.toUTCString)) {
+            if (typeof options.expires === 'number') {
+              date = new Date();
+              date.setTime(date.getTime() + (options.expires * 24 * 60 * 60 * 1000));
+            } else {
+              date = options.expires;
+            }
+            expires = '; expires=' + date.toUTCString();
+          }
+          path = options.path ? '; path=' + options.path : '';
+          domain = options.domain ? '; domain=' + options.domain : '';
+          secure = options.secure ? '; secure' : '';
+          return document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
+        } else {
+          cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+            cookies = document.cookie.split(';');
+            for (_i = 0, _len = cookies.length; _i < _len; _i++) {
+              cookie = cookies[_i];
+              cookie = cookie.replace(/^\s\s*/, "").replace(/\s\s*$/, "");
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+              }
+            }
+          }
+          return cookieValue;
+        }
+      },
+      czero: function(m) {
+        if (m < 10) {
+          return '0' + m;
+        } else {
+          return m;
+        }
+      },
+      fdate: function(d) {
+        return [d.getFullYear(), $.czero(d.getMonth() + 1), $.czero(d.getDate())].join('');
+      },
+      week: function(d) {
+        return ['日', '一', '二', '三', '四', '五', '六'][d.getDay()];
+      },
+      pdate: function(d) {
+        d = String(d);
+        return new Date(Number(d.slice(0, 4)), Number(d.slice(4, 6)) - 1, Number(d.slice(6)));
+      },
+      download: function(game) {
+        return window.location.href = game.get('download_url');
+      },
+      trac_download: function(gid, from) {
+        if (from == null) from = "bar";
+        $.ajax({
+          url: window['api_base'] + '/record/trac',
+          data: {
+            from: from,
+            to: 'download',
+            game_id: gid,
+            uuid: $.user_id(),
+            windowname: true
+          },
+          type: 'GET',
+          dataType: 'json',
+          windowname: true,
+          success: function() {}
+        });
+        return true;
+      }
+    });
+  }).call(this);
 
 }).call(this);
 (function() {
 
-  $ma.model(function() {
+  $ma.view(function() {
     return {
-      Adv: {},
-      Item: {
-        url: function() {
-          return '/item?id=' + this.id;
+      TopBanner: {
+        tagName: 'div',
+        className: 'top-banner',
+        make: function(tagName, attributes, content) {
+          var el;
+          el = this._sup.make.apply(this, arguments);
+          $(el).html('\
+        <h1>晓明品酒</h1>\
+      ');
+          return el;
+        }
+      },
+      TitleBar: {
+        tagName: 'div',
+        className: 'title-bar'
+      },
+      HomeBanner$DataView: {
+        tagName: 'div',
+        className: 'banner',
+        colls: new $colls.Advs,
+        initialize: function() {
+          this._sup.initialize.apply(this, arguments);
+          this.$el.append('<div class="loader" style="display:none;">loading...</div>');
+          this.$loader = this.$('div.loader');
+          this.$ul = this.$('ul#advs');
+          return this.$nav = this.$('ul.nav');
         },
-        parse: function(resp, xhr) {
-          resp.star_count = Math.floor(resp.level / 2);
-          resp.unstar_count = 5 - resp.star_count;
-          return resp;
+        make: function(tagName, attributes, content) {
+          var el;
+          el = document.createElement(tagName);
+          if (attributes) $(el).attr(attributes);
+          $(el).html('<div id="slider" class="swipe"><ul id="advs"></ul>\
+        <ul class="nav"></ul></div>');
+          return el;
+        },
+        clear: function() {
+          return this.$ul.html('');
+        },
+        addItem: function(model) {
+          var ad, li;
+          ad = model.toData();
+          li = $("<li style='display: none;'><a href='#game?id=" + ad.product_id + "&from=banner'><img src='" + ad.pic + "'/></a></li>");
+          this.$ul.append(li);
+          return this.$nav.append('<li></li>');
+        },
+        finishFetch: function(collection, resp) {
+          var _this = this;
+          (this.$ul.find('li:first-child')).css('display', 'block');
+          (this.$nav.find('li:first-child')).addClass('selected');
+          return this.swiper = new Swipe((this.$('#slider'))[0], {
+            speed: 400,
+            auto: 5000,
+            callback: function(event, index, elem) {
+              (_this.$nav.find('li')).removeClass('selected');
+              return $(_this.$nav.find('li')[index]).addClass('selected');
+            }
+          });
+        }
+      },
+      Items$ListView: {
+        className: 'games',
+        tmpl: $tmpls.game_item
+      },
+      FeatureItems$Items: {
+        colls: new $colls.HomeItems
+      },
+      CategoryItems$Items: {
+        initialize: function() {
+          this.colls = new $colls.CategoryItems;
+          return $views.Items.prototype.initialize.apply(this, arguments);
+        },
+        category: function(cid) {
+          this.colls.category(cid);
+          return this.refresh();
+        }
+      },
+      Categorys$ListView: {
+        className: 'categorys',
+        ul_class: 'table col3',
+        tmpl: $tmpls.category_item,
+        colls: new $colls.Categories
+      },
+      SearchItems$Items: {
+        colls: new $colls.SearchItems,
+        search: function(keyword) {
+          this.colls.search(keyword);
+          return this.refresh();
+        }
+      },
+      SearchBar: {
+        tagName: 'div',
+        id: 'search_bar',
+        className: 'subbar',
+        initialize: function() {
+          var _this = this;
+          $views.Base.prototype.initialize.apply(this, arguments);
+          this.$input = this.$('input');
+          return this.$input.bind('change', function() {
+            return _this.trigger('search', _this.$input.val());
+          });
+        },
+        make: function(tagName, attributes, content) {
+          var el;
+          el = document.createElement(tagName);
+          if (attributes) $(el).attr(attributes);
+          $(el).html('<input type="search" placeholder="在这里输入文字"/>');
+          return el;
+        }
+      },
+      ItemView: {
+        tagName: 'div',
+        id: 'game_info',
+        className: 'ui-container',
+        initialize: function() {
+          this._sup.initialize.apply(this, arguments);
+          this.$icon = this.$('#info img');
+          this.$name = this.$('#info p b');
+          this.$ext_info = this.$('#info p.ext_info');
+          this.$infos = this.$('#infos');
+          this.$loader = this.$('.loading');
+          return this.$content = this.$('#content');
+        },
+        set_game: function(game) {
+          this.game = game;
+          this.clear();
+          this.$content.hide();
+          return this.$loader.show();
+        },
+        clear: function() {
+          this.lastScroll = 0;
+          this.$icon.attr('src', this.game.get('icon') || '');
+          this.$name.html(this.game.get('name') || '');
+          this.$ext_info.html('');
+          return (this.$('#evaluator,#screen_shots')).html('');
+        },
+        finishFetch: function(model, resp) {
+          var data, desc, i, infos, name, ss, sshtml, sslist, value;
+          data = model.toData();
+          ss = data['screenshots'];
+          desc = data['description'].replace(/\n/g, '<br/>');
+          this.$name.html(data['name']);
+          this.$icon.attr('src', data['icon_full']);
+          this.$ext_info.html($tmpls.item_ext_info(data));
+          infos = (function() {
+            var _ref, _results;
+            _ref = data['infos'];
+            _results = [];
+            for (name in _ref) {
+              value = _ref[name];
+              _results.push("<li><b>" + name + ":</b>" + value + "</li>");
+            }
+            return _results;
+          })();
+          infos = infos.join('');
+          (this.$('#infos')).html("        <ul>" + infos + "</ul>      ");
+          (this.$('#evaluator')).html("        <p>" + desc + "</p>      ");
+          sshtml = ["<ul class='gallery'>"];
+          sslist = (_.map(ss, function(s) {
+            return s.big;
+          })).join(';');
+          i = 0;
+          _.each(ss, function(s) {
+            sshtml.push("<li><a href='#ss?img=" + s.big + "'><img src='" + s.small + "' index='" + i + "'/></a></li>");
+            return i++;
+          });
+          sshtml.push('</ul>');
+          (this.$('#screen_shots')).html(sshtml.join(''));
+          this.$loader.hide();
+          return this.$content.show();
+        },
+        make: function(tagName, attributes, content) {
+          var el;
+          el = this._sup.make.apply(this, arguments);
+          $(el).html('\
+        <div id="info">\
+          <p><b></b></p>\
+          <img class="icon" src="" />\
+          <p class="ext_info"></p>\
+        </div>\
+        <div id="content" style="display: none;">\
+          <h4>详细参数</h4>\
+          <div id="infos"></div>\
+          <h4>美酒介绍</h4>\
+          <div id="evaluator"></div>\
+          <h4>图片展示</h4>\
+          <div id="screen_shots"></div>\
+        </div>\
+        <div class="loading" style="display: none;">游戏信息加载中...</div>');
+          return el;
+        }
+      },
+      ImageView: {
+        tagName: 'div',
+        id: 'image',
+        initialize: function() {
+          this._sup.initialize.apply(this, arguments);
+          return this.$img = this.$('img');
+        },
+        set_img: function(url) {
+          return this.$img.attr('src', url);
+        },
+        make: function(tagName, attributes, content) {
+          var el;
+          el = this._sup.make.apply(this, arguments);
+          $(el).html('<img src="" style="width: 100%;" class="screen_img"/>');
+          return el;
         }
       }
     };

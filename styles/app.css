@@ -38,6 +38,15 @@ ul.sub-tabs{width:100%;padding:0;margin:0;height:38px;background-image:url("../i
 ul.sub-tabs>li{display:inline;float:left;margin:0;padding:6.666666666666666px;border:0;text-align:center;height:100%;-webkit-box-sizing:border-box;}
 ul.sub-tabs>li a{display:block;text-align:center;padding:6.666666666666666px 0 3.333333333333333px;font-size:14.666666666666666px;color:#888;text-shadow:1px 1px 0 rgba(0,0,0,0.10)}
 ul.sub-tabs>li.active a{color:#fff;border-bottom:1px solid #fff}
+ul.col2 li{width:50%}
+ul.col3 li{width:33.333%}
+ul.col4 li{width:25%}
+ul.col5 li{width:20%}
+ul.table{list-style:none;margin:16.666666666666664px 0 0 6.666666666666666px;padding:0;zoom:1;}
+ul.table::after{content:'';clear:both;display:block}
+ul.table li{float:left;display:inline;text-align:center;margin:4px 0;}
+ul.table li img.icon{margin:0;float:none;border-radius:10px 10px;-webkit-box-shadow:0 1px 4px rgba(0,0,0,0.30);width:64px;height:64px}
+ul.table li p{margin-top:5px;display:block;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
 #wrapper{position:absolute;z-index:1;top:0;bottom:0;left:0;width:100%;overflow:auto}
 #scroller{position:absolute;z-index:1;-webkit-tap-highlight-color:rgba(0,0,0,0.00);width:100%;padding:0}
 #pullDown,#pullUp{background:#fff;height:40px;line-height:40px;padding:5px 10px;font-weight:bold;font-size:14px;color:#888}
